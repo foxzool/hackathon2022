@@ -2,6 +2,8 @@ use bevy::prelude::*;
 use std::f32::consts::{FRAC_PI_2, PI};
 use std::fmt::{Display, Formatter};
 
+pub mod math;
+
 /// 块
 #[derive(Debug, Default, Component, Reflect, FromReflect, Clone, Copy)]
 #[reflect(Component)]
@@ -232,4 +234,150 @@ pub fn random_command(n: usize) -> Vec<Command> {
         v.push(Command(mov, rep as i8));
     }
     v
+}
+
+/// 面
+#[derive(PartialEq, Eq, Clone, Copy, Debug, Hash)]
+pub enum FACE {
+    UP,
+    LEFT,
+    FRONT,
+    RIGHT,
+    BACK,
+    DOWN,
+}
+
+/// 贴纸颜色
+#[derive(PartialEq, Eq, Clone, Copy, Debug, Hash, Default)]
+#[repr(u8)]
+pub enum COLOR {
+    #[default]
+    WHITE,
+    GREEN,
+    RED,
+    BLUE,
+    ORANGE,
+    YELLOW,
+}
+
+///  棱
+#[derive(PartialEq, Eq, Clone, Copy, Debug, Hash)]
+#[repr(u8)]
+pub enum EDGE {
+    UR,
+    UF,
+    UB,
+    UL,
+    FR,
+    FL,
+    BL,
+    BR,
+    DF,
+    DL,
+    DB,
+    DR,
+}
+
+impl TryFrom<u8> for EDGE {
+    type Error = ();
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(Self::UR),
+            1 => Ok(Self::UF),
+            2 => Ok(Self::UB),
+            3 => Ok(Self::UL),
+            4 => Ok(Self::FR),
+            5 => Ok(Self::FL),
+            6 => Ok(Self::BL),
+            7 => Ok(Self::BR),
+            8 => Ok(Self::DF),
+            9 => Ok(Self::DL),
+            10 => Ok(Self::DB),
+            11 => Ok(Self::DR),
+
+            _ => Err(()),
+        }
+    }
+}
+
+///  角块
+#[derive(PartialEq, Eq, Clone, Copy, Debug, Hash)]
+#[repr(u8)]
+pub enum CORNER {
+    ULB,
+    URB,
+    URF,
+    ULF,
+    DLF,
+    DLB,
+    DRB,
+    DRF,
+}
+
+impl TryFrom<u8> for CORNER {
+    type Error = ();
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(Self::ULB),
+            1 => Ok(Self::URB),
+            2 => Ok(Self::URF),
+            3 => Ok(Self::ULF),
+            4 => Ok(Self::DLF),
+            5 => Ok(Self::DLB),
+            6 => Ok(Self::DRB),
+            7 => Ok(Self::DRF),
+
+            _ => Err(()),
+        }
+    }
+}
+
+/// 转动方法
+pub enum MOVE {
+    L,
+    LPRIME,
+    L2,
+    R,
+    RPRIME,
+    R2,
+    U,
+    UPRIME,
+    U2,
+    D,
+    DPRIME,
+    D2,
+    F,
+    FPRIME,
+    F2,
+    B,
+    BPRIME,
+    B2,
+    Y,
+    YPRIME,
+    Y2,
+    X,
+    XPRIME,
+    X2,
+    Z,
+    ZPRIME,
+    Z2,
+    M,
+    MPRIME,
+    M2,
+    E,
+    EPRIME,
+    E2,
+    S,
+    SPRIME,
+    S2,
+}
+
+#[derive(Default, Clone, Copy)]
+pub struct Cubie {
+    // 0 - 11 棱, 0 - 7 角
+    pub index: u8,
+    // 0 - 1 棱,  0 - 2 角
+    pub orientation: u8,
 }

@@ -4,7 +4,9 @@ use bevy::app::{App, Plugin};
 
 pub mod camera;
 pub mod core;
+pub mod model;
 pub mod parser;
+pub mod utils;
 pub mod viewer;
 
 /// 魔方插件
