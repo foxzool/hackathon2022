@@ -1,5 +1,8 @@
-use crate::model::RubiksCube;
 pub use database_goal::*;
+
+use crate::model::RubiksCube;
+
+pub mod thistlethwaite;
 
 mod database_goal;
 

@@ -1,11 +1,13 @@
+use bevy::app::{App, Plugin};
+
 use crate::camera::CameraPlugin;
 use crate::viewer::ViewerPlugin;
-use bevy::app::{App, Plugin};
 
 pub mod camera;
 pub mod core;
 pub mod model;
 pub mod parser;
+pub mod solver;
 pub mod utils;
 pub mod viewer;
 

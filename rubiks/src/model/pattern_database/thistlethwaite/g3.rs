@@ -97,7 +97,7 @@ impl PatternDatabase for G3PatternDatabase {
         for i in 0..num_corners {
             for j in (i + 1)..num_corners {
                 if i_cube.get_corner_index(CORNER::try_from(i).unwrap())
-                    > i_cube.get_corner_index(CORNER::try_from(j).unwrap())
+                    < i_cube.get_corner_index(CORNER::try_from(j).unwrap())
                 {
                     parity ^= 1;
                 }
