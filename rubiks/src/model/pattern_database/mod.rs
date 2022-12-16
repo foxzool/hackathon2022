@@ -11,7 +11,7 @@ pub trait PatternDatabase {
     fn init(size: usize) -> Self;
     fn get_database_index(&self, cube: &RubiksCubeIndexModel) -> u32;
     fn set_num_moves(&mut self, cube: &RubiksCubeIndexModel, num_moves: u8) -> bool;
-    fn set_num_moves_by_index(&mut self, ind: i32, num_moves: u8) -> bool;
+    fn set_num_moves_by_index(&mut self, ind: u8, num_moves: u8) -> bool;
     fn get_num_moves(&self, cube: &RubiksCubeIndexModel) -> u8;
     fn get_num_moves_by_index(&self, ind: u32) -> u8;
     fn get_num_moves_ex(&self, cube: &RubiksCubeIndexModel, bound_hint: u8, depth: u8) -> u8;

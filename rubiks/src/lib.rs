@@ -7,6 +7,7 @@ pub mod camera;
 pub mod core;
 pub mod model;
 pub mod parser;
+pub mod searcher;
 pub mod solver;
 pub mod utils;
 pub mod viewer;

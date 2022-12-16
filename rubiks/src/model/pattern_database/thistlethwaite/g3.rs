@@ -107,7 +107,7 @@ impl PatternDatabase for G3PatternDatabase {
         todo!()
     }
 
-    fn set_num_moves_by_index(&mut self, ind: i32, num_moves: u8) -> bool {
+    fn set_num_moves_by_index(&mut self, ind: u8, num_moves: u8) -> bool {
         todo!()
     }
 
