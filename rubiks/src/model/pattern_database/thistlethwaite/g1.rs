@@ -11,12 +11,16 @@ pub struct G1PatternDatabase {
 }
 
 impl PatternDatabase for G1PatternDatabase {
-    fn init(size: usize) -> Self {
+    fn new(size: usize) -> Self {
         Self {
             database: NibbleArray::new(size),
             size,
             num_items: 0,
         }
+    }
+
+    fn get_database(&self) -> &NibbleArray {
+        &self.database
     }
 
     fn get_database_index(&self, i_cube: &RubiksCubeIndexModel) -> u32 {
@@ -34,18 +38,25 @@ impl PatternDatabase for G1PatternDatabase {
     }
 
     fn set_num_moves(&mut self, cube: &RubiksCubeIndexModel, num_moves: u8) -> bool {
-        todo!()
+        self.set_num_moves_by_index(self.get_database_index(cube), num_moves)
     }
 
-    fn set_num_moves_by_index(&mut self, ind: u8, num_moves: u8) -> bool {
-        todo!()
+    fn set_num_moves_by_index(&mut self, ind: u32, num_moves: u8) -> bool {
+        let old = self.get_num_moves_by_index(ind);
+
+        if old == 0xF {
+            self.num_items += 1;
+        }
+
+        if old > num_moves {
+            self.database.set(ind as usize, num_moves);
+            return true;
+        }
+
+        false
     }
 
     fn get_num_moves(&self, cube: &RubiksCubeIndexModel) -> u8 {
-        todo!()
-    }
-
-    fn get_num_moves_by_index(&self, ind: u32) -> u8 {
         todo!()
     }
 

@@ -4,16 +4,20 @@ pub use thistlethwaite::*;
 
 use crate::core::math::{choose, pick};
 use crate::model::index_model::RubiksCubeIndexModel;
+use crate::utils::NibbleArray;
 
 mod thistlethwaite;
 
 pub trait PatternDatabase {
-    fn init(size: usize) -> Self;
+    fn new(size: usize) -> Self;
+    fn get_database(&self) -> &NibbleArray;
     fn get_database_index(&self, cube: &RubiksCubeIndexModel) -> u32;
     fn set_num_moves(&mut self, cube: &RubiksCubeIndexModel, num_moves: u8) -> bool;
-    fn set_num_moves_by_index(&mut self, ind: u8, num_moves: u8) -> bool;
+    fn set_num_moves_by_index(&mut self, ind: u32, num_moves: u8) -> bool;
     fn get_num_moves(&self, cube: &RubiksCubeIndexModel) -> u8;
-    fn get_num_moves_by_index(&self, ind: u32) -> u8;
+    fn get_num_moves_by_index(&self, ind: u32) -> u8 {
+        self.get_database().get(ind as usize)
+    }
     fn get_num_moves_ex(&self, cube: &RubiksCubeIndexModel, bound_hint: u8, depth: u8) -> u8;
     fn get_size(&self) -> usize;
     fn get_num_items(&self) -> usize;
@@ -32,7 +36,7 @@ pub struct CombinationIndexer {
 
 impl CombinationIndexer {
     pub fn new(n_size: usize, k_size: usize) -> Self {
-        let mut choices = vec![vec![]];
+        let mut choices = vec![vec![0u32; k_size + 1]; n_size + 1];
         for n in 0..=n_size {
             for k in 0..=k_size {
                 choices[n][k] = choose(n as u32, k as u32);
@@ -66,8 +70,8 @@ pub struct UnorderedPairSetIndexer {
 impl UnorderedPairSetIndexer {
     pub fn init(n_size: usize) -> Self {
         let mut this = UnorderedPairSetIndexer {
-            pairs: vec![],
-            bases: vec![],
+            pairs: vec![[0; 2]; n_size * (n_size - 1) / 2],
+            bases: vec![0; (n_size - 2) / 2],
             n: n_size,
         };
 
@@ -90,6 +94,7 @@ impl UnorderedPairSetIndexer {
         if pair_ind == 2 {
             pairs_ind += 1;
             self.pairs[pairs_ind as usize] = [pair[0], pair[1]];
+            return;
         }
 
         let start = if pair_ind == 0 {

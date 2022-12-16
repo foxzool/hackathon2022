@@ -5,7 +5,7 @@ use crate::model::goal::Goal;
 use crate::model::index_model::RubiksCubeIndexModel;
 use crate::model::move_store::{G1TwistStore, G2TwistStore, G3TwistStore, TwistStore};
 use crate::model::pattern_database::{
-    G1PatternDatabase, G2PatternDatabase, G3PatternDatabase, G4PatternDatabase,
+    G1PatternDatabase, G2PatternDatabase, G3PatternDatabase, G4PatternDatabase, PatternDatabase,
 };
 use crate::model::searcher::PatternDatabaseIndexer;
 use crate::solver::CubeSolver;
@@ -54,18 +54,35 @@ impl ThistlethwaiteCubeSolver {
         println!("Goal 4: {}", goal.get_description());
         PatternDatabaseIndexer::find_goal(&mut goal, &i_cube, &mut g3_twist_store);
     }
+
+    pub fn init_database() {}
 }
 
 impl CubeSolver for ThistlethwaiteCubeSolver {
-    fn solve_cube() {
+    fn solve_cube(&self) {
         todo!()
     }
 
-    fn init() -> Self {
-        todo!()
+    fn new() -> Self {
+        Self {
+            g1_db: G1PatternDatabase::new(2048),
+            g2_db: G2PatternDatabase::new(1082565),
+            g3_db: G3PatternDatabase::new(352800),
+            g4_db: G4PatternDatabase::new(663552),
+            solving: false,
+        }
     }
 
     fn set_solving(&mut self, solving: bool) {
         todo!()
     }
+}
+
+#[test]
+fn test_solver() {
+    let solver = ThistlethwaiteCubeSolver::new();
+    solver.index_g1_database();
+    solver.index_g2_database();
+    solver.index_g3_database();
+    solver.index_g4_database();
 }

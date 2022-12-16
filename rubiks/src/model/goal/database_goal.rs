@@ -4,7 +4,7 @@ use crate::model::pattern_database::PatternDatabase;
 pub trait DatabaseGoal {
     type Database: PatternDatabase;
     fn get_database(&self) -> Self::Database;
-    fn get_mut_database(&mut self) -> Self::Database;
+    fn get_mut_database(&mut self) -> &mut Self::Database;
     fn get_num_moves(&self, cube: &RubiksCubeIndexModel) -> u8 {
         self.get_database().get_num_moves(cube)
     }
@@ -21,7 +21,7 @@ pub trait DatabaseGoal {
     fn index(&mut self, cube: &RubiksCubeIndexModel, num_moves: u8) -> bool {
         self.get_mut_database().set_num_moves(cube, num_moves)
     }
-    fn index_by_id(&mut self, ind: u8, num_moves: u8) -> bool {
+    fn index_by_id(&mut self, ind: u32, num_moves: u8) -> bool {
         self.get_mut_database()
             .set_num_moves_by_index(ind, num_moves)
     }

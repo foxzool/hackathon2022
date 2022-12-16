@@ -11,13 +11,17 @@ pub struct G2PatternDatabase {
 }
 
 impl PatternDatabase for G2PatternDatabase {
-    fn init(size: usize) -> Self {
+    fn new(size: usize) -> Self {
         Self {
             database: NibbleArray::new(1082565),
             size,
             num_items: 0,
             combo_indexer: CombinationIndexer::new(12, 4),
         }
+    }
+
+    fn get_database(&self) -> &NibbleArray {
+        &self.database
     }
 
     fn get_database_index(&self, i_cube: &RubiksCubeIndexModel) -> u32 {
@@ -65,7 +69,7 @@ impl PatternDatabase for G2PatternDatabase {
         todo!()
     }
 
-    fn set_num_moves_by_index(&mut self, ind: u8, num_moves: u8) -> bool {
+    fn set_num_moves_by_index(&mut self, ind: u32, num_moves: u8) -> bool {
         todo!()
     }
 

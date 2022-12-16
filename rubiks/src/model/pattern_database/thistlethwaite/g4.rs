@@ -11,8 +11,16 @@ pub struct G4PatternDatabase {
 impl G4PatternDatabase {}
 
 impl PatternDatabase for G4PatternDatabase {
-    fn init(size: usize) -> Self {
-        todo!()
+    fn new(size: usize) -> Self {
+        Self {
+            database: NibbleArray::new(size),
+            size,
+            num_items: 0,
+        }
+    }
+
+    fn get_database(&self) -> &NibbleArray {
+        &self.database
     }
 
     fn get_database_index(&self, cube: &RubiksCubeIndexModel) -> u32 {
@@ -23,7 +31,7 @@ impl PatternDatabase for G4PatternDatabase {
         todo!()
     }
 
-    fn set_num_moves_by_index(&mut self, ind: u8, num_moves: u8) -> bool {
+    fn set_num_moves_by_index(&mut self, ind: u32, num_moves: u8) -> bool {
         todo!()
     }
 

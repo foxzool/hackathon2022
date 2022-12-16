@@ -33,8 +33,8 @@ impl PatternDatabaseIndexer {
         goal.index(cube, 0);
         ind_count += 1;
 
-        while (!goal.is_satisfied(cube)) {
-            if (node_stack.is_empty()) {
+        while !goal.is_satisfied(cube) {
+            if node_stack.is_empty() {
                 println!(
                     "Indexer: Finished depth {cur_depth}. Elapsed time {}s. Indexed {ind_count} states",
                     timer.elapsed().as_secs()
@@ -66,7 +66,7 @@ impl PatternDatabaseIndexer {
                     }
 
                     if cube_copy_depth == cur_depth {
-                        if goal.index_by_id(db_ind as u8, cube_copy_depth) {
+                        if goal.index_by_id(db_ind, cube_copy_depth) {
                             ind_count += 1;
                         }
                     } else {

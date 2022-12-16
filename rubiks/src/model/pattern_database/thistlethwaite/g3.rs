@@ -37,7 +37,7 @@ impl G3PatternDatabase {
 }
 
 impl PatternDatabase for G3PatternDatabase {
-    fn init(size: usize) -> Self {
+    fn new(size: usize) -> Self {
         Self {
             database: NibbleArray::new(352800),
             size,
@@ -45,6 +45,10 @@ impl PatternDatabase for G3PatternDatabase {
             combo_indexer: CombinationIndexer::new(8, 4),
             pair_set_indexer: UnorderedPairSetIndexer::init(8),
         }
+    }
+
+    fn get_database(&self) -> &NibbleArray {
+        &self.database
     }
 
     fn get_database_index(&self, i_cube: &RubiksCubeIndexModel) -> u32 {
@@ -107,7 +111,7 @@ impl PatternDatabase for G3PatternDatabase {
         todo!()
     }
 
-    fn set_num_moves_by_index(&mut self, ind: u8, num_moves: u8) -> bool {
+    fn set_num_moves_by_index(&mut self, ind: u32, num_moves: u8) -> bool {
         todo!()
     }
 

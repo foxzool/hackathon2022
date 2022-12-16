@@ -33,7 +33,7 @@ impl DatabaseGoal for G3DatabaseGoal<'_> {
         todo!()
     }
 
-    fn get_mut_database(&mut self) -> Self::Database {
+    fn get_mut_database(&mut self) -> &mut Self::Database {
         todo!()
     }
 }
