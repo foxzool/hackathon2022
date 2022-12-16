@@ -1,3 +1,4 @@
+#[derive(Debug, Clone)]
 pub struct NibbleArray {
     size: usize,
     arr: Vec<u8>,

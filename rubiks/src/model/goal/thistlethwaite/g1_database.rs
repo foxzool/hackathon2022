@@ -2,17 +2,17 @@ use crate::model::goal::{DatabaseGoal, Goal};
 use crate::model::pattern_database::G1PatternDatabase;
 use crate::model::RubiksCube;
 
-pub struct G1Database {
+pub struct G1DatabaseGoal {
     database: G1PatternDatabase,
 }
 
-impl G1Database {
+impl G1DatabaseGoal {
     pub fn new(database: G1PatternDatabase) -> Self {
         Self { database }
     }
 }
 
-impl Goal for G1Database {
+impl Goal for G1DatabaseGoal {
     fn is_satisfied(&self, cube: &impl RubiksCube) -> bool {
         todo!()
     }
@@ -26,7 +26,7 @@ impl Goal for G1Database {
     }
 }
 
-impl DatabaseGoal for G1Database {
+impl DatabaseGoal for G1DatabaseGoal {
     type Database = G1PatternDatabase;
 
     fn get_database(&self) -> Self::Database {

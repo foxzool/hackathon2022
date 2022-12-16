@@ -4,6 +4,7 @@ use crate::model::pattern_database::PatternDatabase;
 use crate::model::RubiksCube;
 use crate::utils::NibbleArray;
 
+#[derive(Debug, Clone)]
 pub struct G1PatternDatabase {
     database: NibbleArray,
     size: usize,

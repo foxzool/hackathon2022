@@ -1,8 +1,10 @@
-use crate::core::{Cubie, COLOR, CORNER, EDGE, FACE};
-use crate::model::RubiksCube;
 use std::any::Any;
 
+use crate::core::{Cubie, COLOR, CORNER, EDGE, FACE, MOVE};
+use crate::model::RubiksCube;
+
 /// 快速排序模型, 注意 顶面红色， 前面白色
+#[derive(Clone, Copy)]
 pub struct RubiksCubeIndexModel {
     edges: [Cubie; 12],
     corners: [Cubie; 8],
@@ -37,6 +39,478 @@ impl Default for RubiksCubeIndexModel {
 impl RubiksCube for RubiksCubeIndexModel {
     fn as_any(&self) -> &dyn Any {
         self
+    }
+
+    fn get_move(&self, ind: MOVE) -> String {
+        todo!()
+    }
+
+    /// 顺时针转顶层
+    fn u(&mut self) -> &mut Self {
+        let hold = self.corners[CORNER::ULF as usize];
+        self.corners[CORNER::ULF as usize] = self.corners[CORNER::URF as usize];
+        self.corners[CORNER::URF as usize] = self.corners[CORNER::URB as usize];
+        self.corners[CORNER::URB as usize] = self.corners[CORNER::ULB as usize];
+        self.corners[CORNER::ULB as usize] = hold;
+
+        let hold = self.edges[EDGE::UL as usize];
+        self.edges[EDGE::UL as usize] = self.edges[EDGE::UF as usize];
+        self.edges[EDGE::UF as usize] = self.edges[EDGE::UR as usize];
+        self.edges[EDGE::UR as usize] = self.edges[EDGE::UB as usize];
+        self.edges[EDGE::UB as usize] = hold;
+
+        self
+    }
+
+    /// 逆时针转顶层
+    fn u_prime(&mut self) -> &mut Self {
+        let hold = self.corners[CORNER::ULB as usize];
+        self.corners[CORNER::ULB as usize] = self.corners[CORNER::URB as usize];
+        self.corners[CORNER::URB as usize] = self.corners[CORNER::URF as usize];
+        self.corners[CORNER::URF as usize] = self.corners[CORNER::ULF as usize];
+        self.corners[CORNER::ULF as usize] = hold;
+
+        let hold = self.edges[EDGE::UB as usize];
+        self.edges[EDGE::UB as usize] = self.edges[EDGE::UR as usize];
+        self.edges[EDGE::UR as usize] = self.edges[EDGE::UF as usize];
+        self.edges[EDGE::UF as usize] = self.edges[EDGE::UL as usize];
+        self.edges[EDGE::UL as usize] = hold;
+
+        self
+    }
+
+    /// 顶层转2次
+    fn u2(&mut self) -> &mut Self {
+        self.corners
+            .swap(CORNER::ULB as usize, CORNER::URF as usize);
+        self.corners
+            .swap(CORNER::URB as usize, CORNER::ULB as usize);
+
+        self.edges.swap(EDGE::UB as usize, EDGE::UF as usize);
+        self.edges.swap(EDGE::UR as usize, EDGE::UL as usize);
+
+        self
+    }
+
+    /// 左面转顺时针
+    fn l(&mut self) -> &mut Self {
+        let hold = self.corners[CORNER::DLB as usize];
+        self.corners[CORNER::DLB as usize] = self.corners[CORNER::DLF as usize];
+        self.corners[CORNER::DLF as usize] = self.corners[CORNER::ULF as usize];
+        self.corners[CORNER::ULF as usize] = self.corners[CORNER::ULB as usize];
+        self.corners[CORNER::ULB as usize] = hold;
+
+        let hold = self.edges[EDGE::BL as usize];
+        self.edges[EDGE::BL as usize] = self.edges[EDGE::DL as usize];
+        self.edges[EDGE::DL as usize] = self.edges[EDGE::FL as usize];
+        self.edges[EDGE::FL as usize] = self.edges[EDGE::UL as usize];
+        self.edges[EDGE::UL as usize] = hold;
+
+        self.update_corner_orientation(CORNER::DLB, 1);
+        self.update_corner_orientation(CORNER::DLF, 1);
+        self.update_corner_orientation(CORNER::ULF, 1);
+        self.update_corner_orientation(CORNER::ULB, 1);
+
+        self
+    }
+
+    /// 左面转逆时针
+    fn l_prime(&mut self) -> &mut Self {
+        let hold = self.corners[CORNER::DLB as usize];
+        self.corners[CORNER::DLB as usize] = self.corners[CORNER::ULB as usize];
+        self.corners[CORNER::ULB as usize] = self.corners[CORNER::ULF as usize];
+        self.corners[CORNER::ULF as usize] = self.corners[CORNER::DLF as usize];
+        self.corners[CORNER::DLF as usize] = hold;
+
+        let hold = self.edges[EDGE::BL as usize];
+        self.edges[EDGE::BL as usize] = self.edges[EDGE::UL as usize];
+        self.edges[EDGE::UL as usize] = self.edges[EDGE::FL as usize];
+        self.edges[EDGE::FL as usize] = self.edges[EDGE::DL as usize];
+        self.edges[EDGE::DL as usize] = hold;
+
+        self.update_corner_orientation(CORNER::DLB, 1);
+        self.update_corner_orientation(CORNER::DLF, 2);
+        self.update_corner_orientation(CORNER::ULF, 1);
+        self.update_corner_orientation(CORNER::ULB, 2);
+
+        self
+    }
+
+    /// 左面转2次
+    fn l2(&mut self) -> &mut Self {
+        self.corners
+            .swap(CORNER::DLB as usize, CORNER::ULF as usize);
+        self.corners
+            .swap(CORNER::ULB as usize, CORNER::DLF as usize);
+
+        self.edges.swap(EDGE::BL as usize, EDGE::FL as usize);
+        self.edges.swap(EDGE::UL as usize, EDGE::DL as usize);
+
+        self
+    }
+
+    /// 顺时针转动前面
+    fn f(&mut self) -> &mut Self {
+        let hold = self.corners[CORNER::ULF as usize];
+        self.corners[CORNER::ULF as usize] = self.corners[CORNER::DLF as usize];
+        self.corners[CORNER::DLF as usize] = self.corners[CORNER::DRF as usize];
+        self.corners[CORNER::DRF as usize] = self.corners[CORNER::URF as usize];
+        self.corners[CORNER::URF as usize] = hold;
+
+        let hold = self.edges[EDGE::UF as usize];
+        self.edges[EDGE::UF as usize] = self.edges[EDGE::FL as usize];
+        self.edges[EDGE::FL as usize] = self.edges[EDGE::DF as usize];
+        self.edges[EDGE::DF as usize] = self.edges[EDGE::FR as usize];
+        self.edges[EDGE::FR as usize] = hold;
+
+        self.update_corner_orientation(CORNER::ULF, 2);
+        self.update_corner_orientation(CORNER::URF, 1);
+        self.update_corner_orientation(CORNER::DRF, 2);
+        self.update_corner_orientation(CORNER::DLF, 1);
+
+        self.update_edge_orientation_z(EDGE::UF);
+        self.update_edge_orientation_z(EDGE::FL);
+        self.update_edge_orientation_z(EDGE::DF);
+        self.update_edge_orientation_z(EDGE::FR);
+
+        self
+    }
+
+    /// 逆时针转动前面
+    fn f_prime(&mut self) -> &mut Self {
+        let hold = self.corners[CORNER::ULF as usize];
+        self.corners[CORNER::ULF as usize] = self.corners[CORNER::URF as usize];
+        self.corners[CORNER::URF as usize] = self.corners[CORNER::DRF as usize];
+        self.corners[CORNER::DRF as usize] = self.corners[CORNER::DLF as usize];
+        self.corners[CORNER::DLF as usize] = hold;
+
+        let hold = self.edges[EDGE::UF as usize];
+        self.edges[EDGE::UF as usize] = self.edges[EDGE::FR as usize];
+        self.edges[EDGE::FR as usize] = self.edges[EDGE::DF as usize];
+        self.edges[EDGE::DF as usize] = self.edges[EDGE::FL as usize];
+        self.edges[EDGE::FL as usize] = hold;
+
+        self.update_corner_orientation(CORNER::ULF, 2);
+        self.update_corner_orientation(CORNER::URF, 1);
+        self.update_corner_orientation(CORNER::DRF, 2);
+        self.update_corner_orientation(CORNER::DLF, 1);
+
+        self.update_edge_orientation_z(EDGE::UF);
+        self.update_edge_orientation_z(EDGE::FL);
+        self.update_edge_orientation_z(EDGE::DF);
+        self.update_edge_orientation_z(EDGE::FR);
+
+        self
+    }
+
+    /// 前面转2次
+    fn f2(&mut self) -> &mut Self {
+        self.corners
+            .swap(CORNER::ULF as usize, CORNER::DRF as usize);
+        self.corners
+            .swap(CORNER::DLF as usize, CORNER::URF as usize);
+
+        self.edges.swap(EDGE::UF as usize, EDGE::DF as usize);
+        self.edges.swap(EDGE::FL as usize, EDGE::FR as usize);
+
+        self
+    }
+
+    /// 顺时针转动右面
+    fn r(&mut self) -> &mut Self {
+        let hold = self.corners[CORNER::DRB as usize];
+        self.corners[CORNER::DRB as usize] = self.corners[CORNER::URB as usize];
+        self.corners[CORNER::URB as usize] = self.corners[CORNER::URF as usize];
+        self.corners[CORNER::URF as usize] = self.corners[CORNER::DRF as usize];
+        self.corners[CORNER::DRF as usize] = hold;
+
+        let hold = self.edges[EDGE::BR as usize];
+        self.edges[EDGE::BR as usize] = self.edges[EDGE::UR as usize];
+        self.edges[EDGE::UR as usize] = self.edges[EDGE::FR as usize];
+        self.edges[EDGE::FR as usize] = self.edges[EDGE::DR as usize];
+        self.edges[EDGE::DR as usize] = hold;
+
+        self.update_corner_orientation(CORNER::URF, 2);
+        self.update_corner_orientation(CORNER::URB, 1);
+        self.update_corner_orientation(CORNER::DRB, 2);
+        self.update_corner_orientation(CORNER::DRF, 1);
+
+        self
+    }
+
+    /// 逆时针转动右面
+    fn r_prime(&mut self) -> &mut Self {
+        let hold = self.corners[CORNER::DRB as usize];
+        self.corners[CORNER::DRB as usize] = self.corners[CORNER::DRF as usize];
+        self.corners[CORNER::DRF as usize] = self.corners[CORNER::URF as usize];
+        self.corners[CORNER::URF as usize] = self.corners[CORNER::URB as usize];
+        self.corners[CORNER::URB as usize] = hold;
+
+        let hold = self.edges[EDGE::BR as usize];
+        self.edges[EDGE::BR as usize] = self.edges[EDGE::DR as usize];
+        self.edges[EDGE::DR as usize] = self.edges[EDGE::FR as usize];
+        self.edges[EDGE::FR as usize] = self.edges[EDGE::UR as usize];
+        self.edges[EDGE::UR as usize] = hold;
+
+        self.update_corner_orientation(CORNER::URF, 2);
+        self.update_corner_orientation(CORNER::URB, 1);
+        self.update_corner_orientation(CORNER::DRB, 2);
+        self.update_corner_orientation(CORNER::DRF, 1);
+
+        self
+    }
+
+    /// 右面转2次
+    fn r2(&mut self) -> &mut Self {
+        self.corners
+            .swap(CORNER::URF as usize, CORNER::DRB as usize);
+        self.corners
+            .swap(CORNER::URB as usize, CORNER::DRF as usize);
+
+        self.edges.swap(EDGE::UR as usize, EDGE::DR as usize);
+        self.edges.swap(EDGE::FR as usize, EDGE::BR as usize);
+
+        self
+    }
+
+    /// 顺时针转动后面
+    fn b(&mut self) -> &mut Self {
+        let hold = self.corners[CORNER::ULB as usize];
+        self.corners[CORNER::ULB as usize] = self.corners[CORNER::URB as usize];
+        self.corners[CORNER::URB as usize] = self.corners[CORNER::DRB as usize];
+        self.corners[CORNER::DRB as usize] = self.corners[CORNER::DLB as usize];
+        self.corners[CORNER::DLB as usize] = hold;
+
+        let hold = self.edges[EDGE::UB as usize];
+        self.edges[EDGE::UB as usize] = self.edges[EDGE::BR as usize];
+        self.edges[EDGE::BR as usize] = self.edges[EDGE::DB as usize];
+        self.edges[EDGE::DB as usize] = self.edges[EDGE::BL as usize];
+        self.edges[EDGE::BL as usize] = hold;
+
+        self.update_corner_orientation(CORNER::URB, 2);
+        self.update_corner_orientation(CORNER::ULB, 1);
+        self.update_corner_orientation(CORNER::DRB, 1);
+        self.update_corner_orientation(CORNER::DLB, 2);
+
+        self.update_edge_orientation_z(EDGE::UB);
+        self.update_edge_orientation_z(EDGE::BL);
+        self.update_edge_orientation_z(EDGE::DB);
+        self.update_edge_orientation_z(EDGE::BR);
+
+        self
+    }
+
+    /// 逆时针转动后面
+    fn b_prime(&mut self) -> &mut Self {
+        let hold = self.corners[CORNER::ULB as usize];
+        self.corners[CORNER::ULB as usize] = self.corners[CORNER::DLB as usize];
+        self.corners[CORNER::DLB as usize] = self.corners[CORNER::DRB as usize];
+        self.corners[CORNER::DRB as usize] = self.corners[CORNER::URB as usize];
+        self.corners[CORNER::URB as usize] = hold;
+
+        let hold = self.edges[EDGE::UB as usize];
+        self.edges[EDGE::UB as usize] = self.edges[EDGE::BL as usize];
+        self.edges[EDGE::BL as usize] = self.edges[EDGE::DB as usize];
+        self.edges[EDGE::DB as usize] = self.edges[EDGE::BR as usize];
+        self.edges[EDGE::BR as usize] = hold;
+
+        self.update_corner_orientation(CORNER::URB, 2);
+        self.update_corner_orientation(CORNER::ULB, 1);
+        self.update_corner_orientation(CORNER::DRB, 1);
+        self.update_corner_orientation(CORNER::DLB, 2);
+
+        self.update_edge_orientation_z(EDGE::UB);
+        self.update_edge_orientation_z(EDGE::BL);
+        self.update_edge_orientation_z(EDGE::DB);
+        self.update_edge_orientation_z(EDGE::BR);
+
+        self
+    }
+
+    /// 后面转2次
+    fn b2(&mut self) -> &mut Self {
+        self.corners
+            .swap(CORNER::ULB as usize, CORNER::DRB as usize);
+        self.corners
+            .swap(CORNER::URB as usize, CORNER::DLB as usize);
+
+        self.edges.swap(EDGE::UB as usize, EDGE::DB as usize);
+        self.edges.swap(EDGE::BL as usize, EDGE::BR as usize);
+
+        self
+    }
+
+    /// 顺时针转动下面
+    fn d(&mut self) -> &mut Self {
+        let hold = self.corners[CORNER::DLB as usize];
+        self.corners[CORNER::DLB as usize] = self.corners[CORNER::DRB as usize];
+        self.corners[CORNER::DRB as usize] = self.corners[CORNER::DRF as usize];
+        self.corners[CORNER::DRF as usize] = self.corners[CORNER::DLF as usize];
+        self.corners[CORNER::DLF as usize] = hold;
+
+        let hold = self.edges[EDGE::DB as usize];
+        self.edges[EDGE::DB as usize] = self.edges[EDGE::DR as usize];
+        self.edges[EDGE::DR as usize] = self.edges[EDGE::DF as usize];
+        self.edges[EDGE::DF as usize] = self.edges[EDGE::DL as usize];
+        self.edges[EDGE::DL as usize] = hold;
+
+        self
+    }
+
+    /// 逆时针转动下面
+    fn d_prime(&mut self) -> &mut Self {
+        let hold = self.corners[CORNER::DLF as usize];
+        self.corners[CORNER::DLF as usize] = self.corners[CORNER::DRF as usize];
+        self.corners[CORNER::DRF as usize] = self.corners[CORNER::DRB as usize];
+        self.corners[CORNER::DRB as usize] = self.corners[CORNER::DLB as usize];
+        self.corners[CORNER::DLB as usize] = hold;
+
+        let hold = self.edges[EDGE::DB as usize];
+        self.edges[EDGE::DB as usize] = self.edges[EDGE::DL as usize];
+        self.edges[EDGE::DL as usize] = self.edges[EDGE::DF as usize];
+        self.edges[EDGE::DF as usize] = self.edges[EDGE::DR as usize];
+        self.edges[EDGE::DR as usize] = hold;
+
+        self
+    }
+
+    /// 下面转2次
+    fn d2(&mut self) -> &mut Self {
+        self.corners
+            .swap(CORNER::DLB as usize, CORNER::DRF as usize);
+        self.corners
+            .swap(CORNER::DLF as usize, CORNER::DRB as usize);
+
+        self.edges.swap(EDGE::DB as usize, EDGE::DF as usize);
+        self.edges.swap(EDGE::DL as usize, EDGE::DR as usize);
+
+        self
+    }
+
+    fn m(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+
+    fn m_prime(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+
+    fn m2(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+
+    fn e(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+
+    fn e_prime(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+
+    fn e2(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+
+    fn s(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+
+    fn s_prime(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+
+    fn s2(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+
+    fn y(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+
+    fn y_prime(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+
+    fn y2(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+
+    fn x(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+
+    fn x_prime(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+
+    fn x2(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+
+    fn z(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+
+    fn z_prime(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
+    }
+
+    fn z2(&mut self) -> &mut Self
+    where
+        Self: Sized,
+    {
+        todo!()
     }
 }
 
@@ -366,347 +840,5 @@ impl RubiksCubeIndexModel {
     /// 更新棱的朝向
     fn update_edge_orientation_z(&mut self, ind: EDGE) {
         self.edges[ind as usize].orientation = 1 - self.edges[ind as usize].orientation;
-    }
-
-    /// 顺时针转顶层
-    pub fn u(&mut self) -> &mut Self {
-        let hold = self.corners[CORNER::ULF as usize];
-        self.corners[CORNER::ULF as usize] = self.corners[CORNER::URF as usize];
-        self.corners[CORNER::URF as usize] = self.corners[CORNER::URB as usize];
-        self.corners[CORNER::URB as usize] = self.corners[CORNER::ULB as usize];
-        self.corners[CORNER::ULB as usize] = hold;
-
-        let hold = self.edges[EDGE::UL as usize];
-        self.edges[EDGE::UL as usize] = self.edges[EDGE::UF as usize];
-        self.edges[EDGE::UF as usize] = self.edges[EDGE::UR as usize];
-        self.edges[EDGE::UR as usize] = self.edges[EDGE::UB as usize];
-        self.edges[EDGE::UB as usize] = hold;
-
-        self
-    }
-
-    /// 逆时针转顶层
-    pub fn u_prime(&mut self) -> &mut Self {
-        let hold = self.corners[CORNER::ULB as usize];
-        self.corners[CORNER::ULB as usize] = self.corners[CORNER::URB as usize];
-        self.corners[CORNER::URB as usize] = self.corners[CORNER::URF as usize];
-        self.corners[CORNER::URF as usize] = self.corners[CORNER::ULF as usize];
-        self.corners[CORNER::ULF as usize] = hold;
-
-        let hold = self.edges[EDGE::UB as usize];
-        self.edges[EDGE::UB as usize] = self.edges[EDGE::UR as usize];
-        self.edges[EDGE::UR as usize] = self.edges[EDGE::UF as usize];
-        self.edges[EDGE::UF as usize] = self.edges[EDGE::UL as usize];
-        self.edges[EDGE::UL as usize] = hold;
-
-        self
-    }
-
-    /// 顶层转2次
-    pub fn u2(&mut self) -> &mut Self {
-        self.corners
-            .swap(CORNER::ULB as usize, CORNER::URF as usize);
-        self.corners
-            .swap(CORNER::URB as usize, CORNER::ULB as usize);
-
-        self.edges.swap(EDGE::UB as usize, EDGE::UF as usize);
-        self.edges.swap(EDGE::UR as usize, EDGE::UL as usize);
-
-        self
-    }
-
-    /// 左面转顺时针
-    pub fn l(&mut self) -> &mut Self {
-        let hold = self.corners[CORNER::DLB as usize];
-        self.corners[CORNER::DLB as usize] = self.corners[CORNER::DLF as usize];
-        self.corners[CORNER::DLF as usize] = self.corners[CORNER::ULF as usize];
-        self.corners[CORNER::ULF as usize] = self.corners[CORNER::ULB as usize];
-        self.corners[CORNER::ULB as usize] = hold;
-
-        let hold = self.edges[EDGE::BL as usize];
-        self.edges[EDGE::BL as usize] = self.edges[EDGE::DL as usize];
-        self.edges[EDGE::DL as usize] = self.edges[EDGE::FL as usize];
-        self.edges[EDGE::FL as usize] = self.edges[EDGE::UL as usize];
-        self.edges[EDGE::UL as usize] = hold;
-
-        self.update_corner_orientation(CORNER::DLB, 1);
-        self.update_corner_orientation(CORNER::DLF, 1);
-        self.update_corner_orientation(CORNER::ULF, 1);
-        self.update_corner_orientation(CORNER::ULB, 1);
-
-        self
-    }
-
-    /// 左面转逆时针
-    pub fn l_prime(&mut self) -> &mut Self {
-        let hold = self.corners[CORNER::DLB as usize];
-        self.corners[CORNER::DLB as usize] = self.corners[CORNER::ULB as usize];
-        self.corners[CORNER::ULB as usize] = self.corners[CORNER::ULF as usize];
-        self.corners[CORNER::ULF as usize] = self.corners[CORNER::DLF as usize];
-        self.corners[CORNER::DLF as usize] = hold;
-
-        let hold = self.edges[EDGE::BL as usize];
-        self.edges[EDGE::BL as usize] = self.edges[EDGE::UL as usize];
-        self.edges[EDGE::UL as usize] = self.edges[EDGE::FL as usize];
-        self.edges[EDGE::FL as usize] = self.edges[EDGE::DL as usize];
-        self.edges[EDGE::DL as usize] = hold;
-
-        self.update_corner_orientation(CORNER::DLB, 1);
-        self.update_corner_orientation(CORNER::DLF, 2);
-        self.update_corner_orientation(CORNER::ULF, 1);
-        self.update_corner_orientation(CORNER::ULB, 2);
-
-        self
-    }
-
-    /// 左面转2次
-    pub fn l2(&mut self) -> &mut Self {
-        self.corners
-            .swap(CORNER::DLB as usize, CORNER::ULF as usize);
-        self.corners
-            .swap(CORNER::ULB as usize, CORNER::DLF as usize);
-
-        self.edges.swap(EDGE::BL as usize, EDGE::FL as usize);
-        self.edges.swap(EDGE::UL as usize, EDGE::DL as usize);
-
-        self
-    }
-
-    /// 顺时针转动前面
-    pub fn f(&mut self) -> &mut Self {
-        let hold = self.corners[CORNER::ULF as usize];
-        self.corners[CORNER::ULF as usize] = self.corners[CORNER::DLF as usize];
-        self.corners[CORNER::DLF as usize] = self.corners[CORNER::DRF as usize];
-        self.corners[CORNER::DRF as usize] = self.corners[CORNER::URF as usize];
-        self.corners[CORNER::URF as usize] = hold;
-
-        let hold = self.edges[EDGE::UF as usize];
-        self.edges[EDGE::UF as usize] = self.edges[EDGE::FL as usize];
-        self.edges[EDGE::FL as usize] = self.edges[EDGE::DF as usize];
-        self.edges[EDGE::DF as usize] = self.edges[EDGE::FR as usize];
-        self.edges[EDGE::FR as usize] = hold;
-
-        self.update_corner_orientation(CORNER::ULF, 2);
-        self.update_corner_orientation(CORNER::URF, 1);
-        self.update_corner_orientation(CORNER::DRF, 2);
-        self.update_corner_orientation(CORNER::DLF, 1);
-
-        self.update_edge_orientation_z(EDGE::UF);
-        self.update_edge_orientation_z(EDGE::FL);
-        self.update_edge_orientation_z(EDGE::DF);
-        self.update_edge_orientation_z(EDGE::FR);
-
-        self
-    }
-
-    /// 逆时针转动前面
-    pub fn f_prime(&mut self) -> &mut Self {
-        let hold = self.corners[CORNER::ULF as usize];
-        self.corners[CORNER::ULF as usize] = self.corners[CORNER::URF as usize];
-        self.corners[CORNER::URF as usize] = self.corners[CORNER::DRF as usize];
-        self.corners[CORNER::DRF as usize] = self.corners[CORNER::DLF as usize];
-        self.corners[CORNER::DLF as usize] = hold;
-
-        let hold = self.edges[EDGE::UF as usize];
-        self.edges[EDGE::UF as usize] = self.edges[EDGE::FR as usize];
-        self.edges[EDGE::FR as usize] = self.edges[EDGE::DF as usize];
-        self.edges[EDGE::DF as usize] = self.edges[EDGE::FL as usize];
-        self.edges[EDGE::FL as usize] = hold;
-
-        self.update_corner_orientation(CORNER::ULF, 2);
-        self.update_corner_orientation(CORNER::URF, 1);
-        self.update_corner_orientation(CORNER::DRF, 2);
-        self.update_corner_orientation(CORNER::DLF, 1);
-
-        self.update_edge_orientation_z(EDGE::UF);
-        self.update_edge_orientation_z(EDGE::FL);
-        self.update_edge_orientation_z(EDGE::DF);
-        self.update_edge_orientation_z(EDGE::FR);
-
-        self
-    }
-
-    /// 前面转2次
-    pub fn f2(&mut self) -> &mut Self {
-        self.corners
-            .swap(CORNER::ULF as usize, CORNER::DRF as usize);
-        self.corners
-            .swap(CORNER::DLF as usize, CORNER::URF as usize);
-
-        self.edges.swap(EDGE::UF as usize, EDGE::DF as usize);
-        self.edges.swap(EDGE::FL as usize, EDGE::FR as usize);
-
-        self
-    }
-
-    /// 顺时针转动右面
-    pub fn r(&mut self) -> &mut Self {
-        let hold = self.corners[CORNER::DRB as usize];
-        self.corners[CORNER::DRB as usize] = self.corners[CORNER::URB as usize];
-        self.corners[CORNER::URB as usize] = self.corners[CORNER::URF as usize];
-        self.corners[CORNER::URF as usize] = self.corners[CORNER::DRF as usize];
-        self.corners[CORNER::DRF as usize] = hold;
-
-        let hold = self.edges[EDGE::BR as usize];
-        self.edges[EDGE::BR as usize] = self.edges[EDGE::UR as usize];
-        self.edges[EDGE::UR as usize] = self.edges[EDGE::FR as usize];
-        self.edges[EDGE::FR as usize] = self.edges[EDGE::DR as usize];
-        self.edges[EDGE::DR as usize] = hold;
-
-        self.update_corner_orientation(CORNER::URF, 2);
-        self.update_corner_orientation(CORNER::URB, 1);
-        self.update_corner_orientation(CORNER::DRB, 2);
-        self.update_corner_orientation(CORNER::DRF, 1);
-
-        self
-    }
-
-    /// 逆时针转动右面
-    pub fn r_prime(&mut self) -> &mut Self {
-        let hold = self.corners[CORNER::DRB as usize];
-        self.corners[CORNER::DRB as usize] = self.corners[CORNER::DRF as usize];
-        self.corners[CORNER::DRF as usize] = self.corners[CORNER::URF as usize];
-        self.corners[CORNER::URF as usize] = self.corners[CORNER::URB as usize];
-        self.corners[CORNER::URB as usize] = hold;
-
-        let hold = self.edges[EDGE::BR as usize];
-        self.edges[EDGE::BR as usize] = self.edges[EDGE::DR as usize];
-        self.edges[EDGE::DR as usize] = self.edges[EDGE::FR as usize];
-        self.edges[EDGE::FR as usize] = self.edges[EDGE::UR as usize];
-        self.edges[EDGE::UR as usize] = hold;
-
-        self.update_corner_orientation(CORNER::URF, 2);
-        self.update_corner_orientation(CORNER::URB, 1);
-        self.update_corner_orientation(CORNER::DRB, 2);
-        self.update_corner_orientation(CORNER::DRF, 1);
-
-        self
-    }
-
-    /// 右面转2次
-    pub fn r2(&mut self) -> &mut Self {
-        self.corners
-            .swap(CORNER::URF as usize, CORNER::DRB as usize);
-        self.corners
-            .swap(CORNER::URB as usize, CORNER::DRF as usize);
-
-        self.edges.swap(EDGE::UR as usize, EDGE::DR as usize);
-        self.edges.swap(EDGE::FR as usize, EDGE::BR as usize);
-
-        self
-    }
-
-    /// 顺时针转动后面
-    pub fn b(&mut self) -> &mut Self {
-        let hold = self.corners[CORNER::ULB as usize];
-        self.corners[CORNER::ULB as usize] = self.corners[CORNER::URB as usize];
-        self.corners[CORNER::URB as usize] = self.corners[CORNER::DRB as usize];
-        self.corners[CORNER::DRB as usize] = self.corners[CORNER::DLB as usize];
-        self.corners[CORNER::DLB as usize] = hold;
-
-        let hold = self.edges[EDGE::UB as usize];
-        self.edges[EDGE::UB as usize] = self.edges[EDGE::BR as usize];
-        self.edges[EDGE::BR as usize] = self.edges[EDGE::DB as usize];
-        self.edges[EDGE::DB as usize] = self.edges[EDGE::BL as usize];
-        self.edges[EDGE::BL as usize] = hold;
-
-        self.update_corner_orientation(CORNER::URB, 2);
-        self.update_corner_orientation(CORNER::ULB, 1);
-        self.update_corner_orientation(CORNER::DRB, 1);
-        self.update_corner_orientation(CORNER::DLB, 2);
-
-        self.update_edge_orientation_z(EDGE::UB);
-        self.update_edge_orientation_z(EDGE::BL);
-        self.update_edge_orientation_z(EDGE::DB);
-        self.update_edge_orientation_z(EDGE::BR);
-
-        self
-    }
-
-    /// 逆时针转动后面
-    pub fn b_prime(&mut self) -> &mut Self {
-        let hold = self.corners[CORNER::ULB as usize];
-        self.corners[CORNER::ULB as usize] = self.corners[CORNER::DLB as usize];
-        self.corners[CORNER::DLB as usize] = self.corners[CORNER::DRB as usize];
-        self.corners[CORNER::DRB as usize] = self.corners[CORNER::URB as usize];
-        self.corners[CORNER::URB as usize] = hold;
-
-        let hold = self.edges[EDGE::UB as usize];
-        self.edges[EDGE::UB as usize] = self.edges[EDGE::BL as usize];
-        self.edges[EDGE::BL as usize] = self.edges[EDGE::DB as usize];
-        self.edges[EDGE::DB as usize] = self.edges[EDGE::BR as usize];
-        self.edges[EDGE::BR as usize] = hold;
-
-        self.update_corner_orientation(CORNER::URB, 2);
-        self.update_corner_orientation(CORNER::ULB, 1);
-        self.update_corner_orientation(CORNER::DRB, 1);
-        self.update_corner_orientation(CORNER::DLB, 2);
-
-        self.update_edge_orientation_z(EDGE::UB);
-        self.update_edge_orientation_z(EDGE::BL);
-        self.update_edge_orientation_z(EDGE::DB);
-        self.update_edge_orientation_z(EDGE::BR);
-
-        self
-    }
-
-    /// 后面转2次
-    pub fn b2(&mut self) -> &mut Self {
-        self.corners
-            .swap(CORNER::ULB as usize, CORNER::DRB as usize);
-        self.corners
-            .swap(CORNER::URB as usize, CORNER::DLB as usize);
-
-        self.edges.swap(EDGE::UB as usize, EDGE::DB as usize);
-        self.edges.swap(EDGE::BL as usize, EDGE::BR as usize);
-
-        self
-    }
-
-    /// 顺时针转动下面
-    pub fn d(&mut self) -> &mut Self {
-        let hold = self.corners[CORNER::DLB as usize];
-        self.corners[CORNER::DLB as usize] = self.corners[CORNER::DRB as usize];
-        self.corners[CORNER::DRB as usize] = self.corners[CORNER::DRF as usize];
-        self.corners[CORNER::DRF as usize] = self.corners[CORNER::DLF as usize];
-        self.corners[CORNER::DLF as usize] = hold;
-
-        let hold = self.edges[EDGE::DB as usize];
-        self.edges[EDGE::DB as usize] = self.edges[EDGE::DR as usize];
-        self.edges[EDGE::DR as usize] = self.edges[EDGE::DF as usize];
-        self.edges[EDGE::DF as usize] = self.edges[EDGE::DL as usize];
-        self.edges[EDGE::DL as usize] = hold;
-
-        self
-    }
-
-    /// 逆时针转动下面
-    pub fn d_prime(&mut self) -> &mut Self {
-        let hold = self.corners[CORNER::DLF as usize];
-        self.corners[CORNER::DLF as usize] = self.corners[CORNER::DRF as usize];
-        self.corners[CORNER::DRF as usize] = self.corners[CORNER::DRB as usize];
-        self.corners[CORNER::DRB as usize] = self.corners[CORNER::DLB as usize];
-        self.corners[CORNER::DLB as usize] = hold;
-
-        let hold = self.edges[EDGE::DB as usize];
-        self.edges[EDGE::DB as usize] = self.edges[EDGE::DL as usize];
-        self.edges[EDGE::DL as usize] = self.edges[EDGE::DF as usize];
-        self.edges[EDGE::DF as usize] = self.edges[EDGE::DR as usize];
-        self.edges[EDGE::DR as usize] = hold;
-
-        self
-    }
-
-    /// 下面转2次
-    pub fn d2(&mut self) -> &mut Self {
-        self.corners
-            .swap(CORNER::DLB as usize, CORNER::DRF as usize);
-        self.corners
-            .swap(CORNER::DLF as usize, CORNER::DRB as usize);
-
-        self.edges.swap(EDGE::DB as usize, EDGE::DF as usize);
-        self.edges.swap(EDGE::DL as usize, EDGE::DR as usize);
-
-        self
     }
 }
