@@ -1,14 +1,12 @@
 use crate::core::MOVE;
-use crate::model::index_model::RubiksCubeIndexModel;
 use crate::model::move_store::MoveStore;
 
-pub struct G2TwistStore<'a> {
-    cube: &'a mut RubiksCubeIndexModel,
+pub struct G2TwistStore {
     moves: Vec<MOVE>,
 }
 
-impl<'a> G2TwistStore<'a> {
-    pub fn new(cube: &'a mut RubiksCubeIndexModel) -> Self {
+impl G2TwistStore {
+    pub fn new() -> Self {
         let moves = vec![
             MOVE::L2,
             MOVE::R2,
@@ -22,11 +20,11 @@ impl<'a> G2TwistStore<'a> {
             MOVE::B2,
         ];
 
-        Self { cube, moves }
+        Self { moves }
     }
 }
 
-impl MoveStore for G2TwistStore<'_> {
+impl MoveStore for G2TwistStore {
     fn get_moves(&self) -> &[MOVE] {
         self.moves.as_slice()
     }

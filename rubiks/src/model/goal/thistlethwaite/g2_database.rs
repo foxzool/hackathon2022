@@ -2,17 +2,17 @@ use crate::model::goal::{DatabaseGoal, Goal};
 use crate::model::index_model::RubiksCubeIndexModel;
 use crate::model::pattern_database::G2PatternDatabase;
 
-pub struct G2Database {
-    database: G2PatternDatabase,
+pub struct G2DatabaseGoal<'a> {
+    database: &'a G2PatternDatabase,
 }
 
-impl G2Database {
-    pub fn new(database: G2PatternDatabase) -> Self {
-        Self { database }
+impl G2DatabaseGoal<'_> {
+    pub fn new(database: &G2PatternDatabase) -> G2DatabaseGoal {
+        G2DatabaseGoal { database }
     }
 }
 
-impl Goal for G2Database {
+impl Goal for G2DatabaseGoal<'_> {
     fn is_satisfied(&self, cube: &RubiksCubeIndexModel) -> bool {
         todo!()
     }
@@ -26,7 +26,7 @@ impl Goal for G2Database {
     }
 }
 
-impl DatabaseGoal for G2Database {
+impl DatabaseGoal for G2DatabaseGoal<'_> {
     type Database = G2PatternDatabase;
 
     fn get_database(&self) -> Self::Database {

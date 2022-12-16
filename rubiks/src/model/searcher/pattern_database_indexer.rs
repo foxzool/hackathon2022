@@ -5,7 +5,7 @@ use crate::model::move_store::MoveStore;
 use crate::searcher::MovePruner;
 
 #[derive(Default)]
-pub struct PatternDatabaseIndexer {}
+pub struct PatternDatabaseIndexer;
 
 #[derive(Clone, Copy)]
 pub struct Node {
@@ -18,7 +18,7 @@ impl PatternDatabaseIndexer {
     pub fn find_goal(
         goal: &mut impl DatabaseGoal,
         cube: &RubiksCubeIndexModel,
-        move_store: &mut dyn MoveStore,
+        move_store: &dyn MoveStore,
     ) {
         let timer = std::time::Instant::now();
         let mut node_stack = Vec::new();
