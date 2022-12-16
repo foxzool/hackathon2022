@@ -1,16 +1,11 @@
 use crate::core::{CORNER, EDGE};
 use crate::model::goal::Goal;
 use crate::model::index_model::RubiksCubeIndexModel;
-use crate::model::RubiksCube;
 
 pub struct GoalG2G3;
 
 impl Goal for GoalG2G3 {
-    fn is_satisfied(&self, cube: &impl RubiksCube) -> bool {
-        let i_cube = cube
-            .as_any()
-            .downcast_ref::<RubiksCubeIndexModel>()
-            .expect("G1G2::is_satisfied() called with non-index model");
+    fn is_satisfied(&self, i_cube: &RubiksCubeIndexModel) -> bool {
         let mut corner_ind = 0;
 
         // ULB, URF
@@ -70,7 +65,7 @@ impl Goal for GoalG2G3 {
         "配对所有四分体角并获得正确切片中的所有边缘。".to_string()
     }
 
-    fn index(&self, cube: &impl RubiksCube, num_moves: u8) -> bool {
+    fn index(&self, cube: &RubiksCubeIndexModel, num_moves: u8) -> bool {
         todo!()
     }
 }

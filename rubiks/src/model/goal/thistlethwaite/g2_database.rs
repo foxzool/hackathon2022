@@ -1,6 +1,6 @@
 use crate::model::goal::{DatabaseGoal, Goal};
+use crate::model::index_model::RubiksCubeIndexModel;
 use crate::model::pattern_database::G2PatternDatabase;
-use crate::model::RubiksCube;
 
 pub struct G2Database {
     database: G2PatternDatabase,
@@ -13,7 +13,7 @@ impl G2Database {
 }
 
 impl Goal for G2Database {
-    fn is_satisfied(&self, cube: &impl RubiksCube) -> bool {
+    fn is_satisfied(&self, cube: &RubiksCubeIndexModel) -> bool {
         todo!()
     }
 
@@ -21,7 +21,7 @@ impl Goal for G2Database {
         "包含用于定位所有角并定位 E 切片边缘的移动次数。".to_string()
     }
 
-    fn index(&self, cube: &impl RubiksCube, num_moves: u8) -> bool {
+    fn index(&self, cube: &RubiksCubeIndexModel, num_moves: u8) -> bool {
         todo!()
     }
 }

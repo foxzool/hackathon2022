@@ -1,12 +1,14 @@
 pub use g1_twist_store::*;
 pub use g2_twist_store::*;
 pub use g3_twist_store::*;
+pub use twist_store::*;
 
 use crate::core::MOVE;
 
 mod g1_twist_store;
 mod g2_twist_store;
 mod g3_twist_store;
+mod twist_store;
 
 pub trait MoveStore {
     fn get_moves(&self) -> &[MOVE];

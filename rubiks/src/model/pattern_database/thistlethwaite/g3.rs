@@ -3,7 +3,6 @@ use crate::model::index_model::RubiksCubeIndexModel;
 use crate::model::pattern_database::{
     CombinationIndexer, PatternDatabase, UnorderedPairSetIndexer,
 };
-use crate::model::RubiksCube;
 use crate::utils::NibbleArray;
 
 pub struct G3PatternDatabase {
@@ -48,11 +47,7 @@ impl PatternDatabase for G3PatternDatabase {
         }
     }
 
-    fn get_database_index(&self, cube: &impl RubiksCube) -> u32 {
-        let i_cube = cube
-            .as_any()
-            .downcast_ref::<RubiksCubeIndexModel>()
-            .expect("Wasn't a trusty cube");
+    fn get_database_index(&self, i_cube: &RubiksCubeIndexModel) -> u32 {
         let num_edges = 12u8;
         let num_corners = 8u8;
 
@@ -108,7 +103,7 @@ impl PatternDatabase for G3PatternDatabase {
         (edge_rank * 2520 + corner_rank) * 2 + parity as u32
     }
 
-    fn set_num_moves(&mut self, cube: &impl RubiksCube, num_moves: u8) -> bool {
+    fn set_num_moves(&mut self, cube: &RubiksCubeIndexModel, num_moves: u8) -> bool {
         todo!()
     }
 
@@ -116,7 +111,7 @@ impl PatternDatabase for G3PatternDatabase {
         todo!()
     }
 
-    fn get_num_moves(&self, cube: &impl RubiksCube) -> u8 {
+    fn get_num_moves(&self, cube: &RubiksCubeIndexModel) -> u8 {
         todo!()
     }
 
@@ -124,7 +119,7 @@ impl PatternDatabase for G3PatternDatabase {
         todo!()
     }
 
-    fn get_num_moves_ex(&self, cube: &impl RubiksCube, bound_hint: u8, depth: u8) -> u8 {
+    fn get_num_moves_ex(&self, cube: &RubiksCubeIndexModel, bound_hint: u8, depth: u8) -> u8 {
         todo!()
     }
 

@@ -1,6 +1,6 @@
 use crate::model::goal::{DatabaseGoal, Goal};
+use crate::model::index_model::RubiksCubeIndexModel;
 use crate::model::pattern_database::G1PatternDatabase;
-use crate::model::RubiksCube;
 
 pub struct G1DatabaseGoal {
     database: G1PatternDatabase,
@@ -13,7 +13,7 @@ impl G1DatabaseGoal {
 }
 
 impl Goal for G1DatabaseGoal {
-    fn is_satisfied(&self, cube: &impl RubiksCube) -> bool {
+    fn is_satisfied(&self, cube: &RubiksCubeIndexModel) -> bool {
         todo!()
     }
 
@@ -21,7 +21,7 @@ impl Goal for G1DatabaseGoal {
         "包含从每个棱方向排列到 G1 的移动次数".to_string()
     }
 
-    fn index(&self, cube: &impl RubiksCube, num_moves: u8) -> bool {
+    fn index(&self, cube: &RubiksCubeIndexModel, num_moves: u8) -> bool {
         todo!()
     }
 }

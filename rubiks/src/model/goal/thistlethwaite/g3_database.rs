@@ -1,6 +1,6 @@
 use crate::model::goal::{DatabaseGoal, Goal};
+use crate::model::index_model::RubiksCubeIndexModel;
 use crate::model::pattern_database::G3PatternDatabase;
-use crate::model::RubiksCube;
 
 pub struct G3Database {
     database: G3PatternDatabase,
@@ -13,7 +13,7 @@ impl G3Database {
 }
 
 impl Goal for G3Database {
-    fn is_satisfied(&self, cube: &impl RubiksCube) -> bool {
+    fn is_satisfied(&self, cube: &RubiksCubeIndexModel) -> bool {
         todo!()
     }
 
@@ -21,7 +21,7 @@ impl Goal for G3Database {
         "包含将四分体中的所有角配对并将所有边放入其切片所需的移动次数。".to_string()
     }
 
-    fn index(&self, cube: &impl RubiksCube, num_moves: u8) -> bool {
+    fn index(&self, cube: &RubiksCubeIndexModel, num_moves: u8) -> bool {
         todo!()
     }
 }

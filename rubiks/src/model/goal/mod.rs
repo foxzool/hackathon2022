@@ -1,13 +1,13 @@
 pub use database_goal::*;
 
-use crate::model::RubiksCube;
+use crate::model::index_model::RubiksCubeIndexModel;
 
 pub mod thistlethwaite;
 
 mod database_goal;
 
-trait Goal {
-    fn is_satisfied(&self, cube: &impl RubiksCube) -> bool;
+pub trait Goal {
+    fn is_satisfied(&self, cube: &RubiksCubeIndexModel) -> bool;
     fn get_description(&self) -> String;
-    fn index(&self, cube: &impl RubiksCube, num_moves: u8) -> bool;
+    fn index(&self, cube: &RubiksCubeIndexModel, num_moves: u8) -> bool;
 }

@@ -2,6 +2,7 @@ use std::f32::consts::{FRAC_PI_2, PI};
 use std::fmt::{Display, Formatter};
 
 use bevy::prelude::*;
+use num_enum::TryFromPrimitive;
 
 pub mod math;
 
@@ -357,7 +358,8 @@ impl TryFrom<u8> for CORNER {
 }
 
 /// 转动方法
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(PartialEq, Eq, Clone, Copy, Debug, Hash, TryFromPrimitive)]
+#[repr(u8)]
 pub enum MOVE {
     L,
     LPRIME,

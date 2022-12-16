@@ -1,7 +1,6 @@
 use crate::core::EDGE;
 use crate::model::index_model::RubiksCubeIndexModel;
 use crate::model::pattern_database::PatternDatabase;
-use crate::model::RubiksCube;
 use crate::utils::NibbleArray;
 
 #[derive(Debug, Clone)]
@@ -20,12 +19,7 @@ impl PatternDatabase for G1PatternDatabase {
         }
     }
 
-    fn get_database_index(&self, cube: &impl RubiksCube) -> u32 {
-        let i_cube: &RubiksCubeIndexModel = cube
-            .as_any()
-            .downcast_ref::<RubiksCubeIndexModel>()
-            .expect("Wasn't a trusty cube");
-
+    fn get_database_index(&self, i_cube: &RubiksCubeIndexModel) -> u32 {
         i_cube.get_edge_orientation(EDGE::UB) as u32 * 1024
             + i_cube.get_edge_orientation(EDGE::UR) as u32 * 512
             + i_cube.get_edge_orientation(EDGE::UF) as u32 * 256
@@ -39,7 +33,7 @@ impl PatternDatabase for G1PatternDatabase {
             + i_cube.get_edge_orientation(EDGE::DB) as u32 * 1
     }
 
-    fn set_num_moves(&mut self, cube: &impl RubiksCube, num_moves: u8) -> bool {
+    fn set_num_moves(&mut self, cube: &RubiksCubeIndexModel, num_moves: u8) -> bool {
         todo!()
     }
 
@@ -47,7 +41,7 @@ impl PatternDatabase for G1PatternDatabase {
         todo!()
     }
 
-    fn get_num_moves(&self, cube: &impl RubiksCube) -> u8 {
+    fn get_num_moves(&self, cube: &RubiksCubeIndexModel) -> u8 {
         todo!()
     }
 
@@ -55,7 +49,7 @@ impl PatternDatabase for G1PatternDatabase {
         todo!()
     }
 
-    fn get_num_moves_ex(&self, cube: &impl RubiksCube, bound_hint: u8, depth: u8) -> u8 {
+    fn get_num_moves_ex(&self, cube: &RubiksCubeIndexModel, bound_hint: u8, depth: u8) -> u8 {
         todo!()
     }
 

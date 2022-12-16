@@ -24,6 +24,7 @@ bevy_egui = "0.17.1"
 nom = "7"
 rand = "0.8.5"
 fixedbitset = "0.4.2"
+num_enum = "0.5.7"
 
 winit = { version = "0.27", default-features = false }
 image = { version = "0.24", default-features = false }

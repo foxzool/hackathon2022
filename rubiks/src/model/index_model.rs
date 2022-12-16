@@ -1,7 +1,6 @@
 use std::any::Any;
 
 use crate::core::{Cubie, COLOR, CORNER, EDGE, FACE, MOVE};
-use crate::model::RubiksCube;
 
 /// 快速排序模型, 注意 顶面红色， 前面白色
 #[derive(Clone, Copy)]
@@ -36,7 +35,89 @@ impl Default for RubiksCubeIndexModel {
     }
 }
 
-impl RubiksCube for RubiksCubeIndexModel {
+impl RubiksCubeIndexModel {
+    pub(crate) fn r#move(&mut self, ind: MOVE) -> &mut Self {
+        match ind {
+            MOVE::L => self.l(),
+            MOVE::LPRIME => self.l_prime(),
+            MOVE::L2 => self.l2(),
+            MOVE::R => self.r(),
+            MOVE::RPRIME => self.r_prime(),
+            MOVE::R2 => self.r2(),
+            MOVE::U => self.u(),
+            MOVE::UPRIME => self.u_prime(),
+            MOVE::U2 => self.u2(),
+            MOVE::D => self.d(),
+            MOVE::DPRIME => self.d_prime(),
+            MOVE::D2 => self.d2(),
+            MOVE::F => self.f(),
+            MOVE::FPRIME => self.f_prime(),
+            MOVE::F2 => self.f2(),
+            MOVE::B => self.b(),
+            MOVE::BPRIME => self.b_prime(),
+            MOVE::B2 => self.b2(),
+            MOVE::X => self.x(),
+            MOVE::XPRIME => self.x_prime(),
+            MOVE::X2 => self.x2(),
+            MOVE::Y => self.y(),
+            MOVE::YPRIME => self.y_prime(),
+            MOVE::Y2 => self.y2(),
+            MOVE::Z => self.z(),
+            MOVE::ZPRIME => self.z_prime(),
+            MOVE::Z2 => self.z2(),
+            MOVE::M => self.m(),
+            MOVE::MPRIME => self.m_prime(),
+            MOVE::M2 => self.m2(),
+            MOVE::E => self.e(),
+            MOVE::EPRIME => self.e_prime(),
+            MOVE::E2 => self.e2(),
+            MOVE::S => self.s(),
+            MOVE::SPRIME => self.s_prime(),
+            MOVE::S2 => self.s2(),
+        }
+    }
+
+    pub fn invert(&mut self, ind: MOVE) -> &mut Self {
+        match ind {
+            MOVE::L => self.l_prime(),
+            MOVE::LPRIME => self.l(),
+            MOVE::L2 => self.l2(),
+            MOVE::R => self.r_prime(),
+            MOVE::RPRIME => self.r(),
+            MOVE::R2 => self.r2(),
+            MOVE::U => self.u_prime(),
+            MOVE::UPRIME => self.u(),
+            MOVE::U2 => self.u2(),
+            MOVE::D => self.d_prime(),
+            MOVE::DPRIME => self.d(),
+            MOVE::D2 => self.d2(),
+            MOVE::F => self.f_prime(),
+            MOVE::FPRIME => self.f(),
+            MOVE::F2 => self.f2(),
+            MOVE::B => self.b_prime(),
+            MOVE::BPRIME => self.b(),
+            MOVE::B2 => self.b2(),
+            MOVE::X => self.x_prime(),
+            MOVE::XPRIME => self.x(),
+            MOVE::X2 => self.x2(),
+            MOVE::Y => self.y_prime(),
+            MOVE::YPRIME => self.y(),
+            MOVE::Y2 => self.y2(),
+            MOVE::Z => self.z_prime(),
+            MOVE::ZPRIME => self.z(),
+            MOVE::Z2 => self.z2(),
+            MOVE::M => self.m_prime(),
+            MOVE::MPRIME => self.m(),
+            MOVE::M2 => self.m2(),
+            MOVE::E => self.e_prime(),
+            MOVE::EPRIME => self.e(),
+            MOVE::E2 => self.e2(),
+            MOVE::S => self.s_prime(),
+            MOVE::SPRIME => self.s(),
+            MOVE::S2 => self.s2(),
+        }
+    }
+
     fn as_any(&self) -> &dyn Any {
         self
     }
