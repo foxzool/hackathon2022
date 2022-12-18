@@ -1,4 +1,4 @@
-use crate::core::{random_command, Command, Piece, Surface, BaseMove};
+use crate::core::{random_command, BaseMove, Command, Piece, Surface};
 use bevy::prelude::*;
 use std::collections::VecDeque;
 use std::f32::consts::{FRAC_PI_2, PI};
@@ -57,7 +57,7 @@ impl Default for CubeSettings {
             right_color: Color::RED,
             top_color: Color::WHITE,
             bottom_color: Color::YELLOW,
-            rotate_speed: 1.0
+            rotate_speed: 1.0,
         }
     }
 }
@@ -76,7 +76,10 @@ pub struct ExecutingCommand {
 
 impl Default for ExecutingCommand {
     fn default() -> Self {
-        Self { command: Command(BaseMove::U, 0), left_angle: 0.0 }
+        Self {
+            command: Command(BaseMove::U, 0),
+            left_angle: 0.0,
+        }
     }
 }
 
@@ -306,8 +309,8 @@ fn move_piece(
     } else {
         let clockwise = executing_cmd.command.clockwise();
         let mut angle = match clockwise {
-            true => { cube_settings.rotate_speed * PI * time.delta_seconds() },
-            false => { -cube_settings.rotate_speed * PI * time.delta_seconds() },
+            true => cube_settings.rotate_speed * PI * time.delta_seconds(),
+            false => -cube_settings.rotate_speed * PI * time.delta_seconds(),
         };
         let left_angle = executing_cmd.left_angle;
         let mut new_left_angle = left_angle - angle;

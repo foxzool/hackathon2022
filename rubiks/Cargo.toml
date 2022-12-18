@@ -25,6 +25,7 @@ bevy = "0.9"
 bevy_egui = "0.17.1"
 nom = "7"
 rand = "0.8.5"
+rubiks_solver = { path = "crates/rubiks_solver" }
 
 winit = { version = "0.27", default-features = false }
 image = { version = "0.24", default-features = false }
